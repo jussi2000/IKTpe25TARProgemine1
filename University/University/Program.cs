@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using University.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace University
 {
@@ -12,6 +13,7 @@ namespace University
             builder.Services.AddDbContext<UniversityContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("UniversityContext")));
 
+
             //add database exeption filter for development enviroment
             //This will show detailed database errors durning development
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -20,6 +22,9 @@ namespace University
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
+
+            // Create DB if it doesn't exist and seed initial data
+            CreateDbIfNotExists(app);
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -42,5 +47,26 @@ namespace University
 
             app.Run();
         }
+
+        //Luuakse andmebaas, kui see veel ei eksisteeri
+        //ja sisestab sinna algandmed
+        private static void CreateDbIfNotExists(IHost host)
+        {
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try 
+                {
+                    var context = services.GetRequiredService<UniversityContext>();
+                    DbInitializer.Initialize(context);
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occured creating the DB.");
+                }
+            }
+        }
     }
+
 }
