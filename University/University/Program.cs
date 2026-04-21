@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace University
 {
+
+    //Command- Update-Database
     public class Program
     {
         public static void Main(string[] args)
