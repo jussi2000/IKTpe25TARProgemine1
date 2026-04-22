@@ -1,5 +1,4 @@
-﻿
-@model University.ViewModel.StudentDetailsViewModel
+﻿@model University.ViewModel.StudentDetailsViewModel
 
 @{
     ViewData["Title"] = "Student Details";
@@ -9,7 +8,7 @@
 
 <div>
     <h4>Student</h4>
-    <hr />   
+    <hr />
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.LastName)
@@ -25,9 +24,25 @@
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.EnrollmentDate)
-        </dt>
+        </dd>  
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.EnrollmentDate)
+            <table class="table">
+                <tr>
+                    <th>Course Title</th>
+                    <th>Grade</th>
+                </tr>
+                @foreach (var item in Model.EnrollmentsVm)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CourseVm.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Grade)
+                        </td>
+                    </tr>
+                }
+            </table>
         </dd>
     </dl>
 </div>
