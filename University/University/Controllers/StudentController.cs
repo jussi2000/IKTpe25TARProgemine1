@@ -25,7 +25,7 @@ namespace University.Controllers
             //kui me kasutame await, siis me ootame kuni päring on lõpetatud
             //ja saame tulemuse, enne kui me jätkame koodi täitmist
             var result = await _context.Students
-                .Select(s => new ViewModel.StudentIndexViewModel
+                .Select(s => new StudentIndexViewModel
                 {
                     Id = s.Id,
                     LastName = s.LastName,
@@ -217,5 +217,51 @@ namespace University.Controllers
 
             return View(vm);
         }
+        //tuleb teha ankeedi 
+        //1. VARIANT
+        public async Task<IActionResult> DeletePost(int id)
+        {
+            try
+            {
+                Student delete = new Student()
+                {
+                    Id = id,
+                };
+                //2. VARIANT
+                //var student = await _context.Students
+                //    .FirstOrDefaultAsync(x => x.Id == id);
+
+                _context.Students.Remove(delete);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException)
+            {
+                return RedirectToAction(nameof(Delete), new { id = id, saveChangerError = true });
+                throw;
+            }
+
+            return RedirectToAction(nameof(Delete));
+        }
+
+
+        /*
+        3. VARIANT
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePost(int id)
+        {
+            var student = await _context.Students.FindAsync(id);
+
+            if (student != null)
+            {
+                _context.Students.Remove(student);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+        */
+
     }
 }
