@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using University.Data;
 using University.Models;
@@ -18,8 +19,34 @@ namespace University.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOeder)
         {
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOeder) ? "name_desc" : "";
+            ViewData["NameSortParm"] = sortOeder == "Date" ? "date_desc" : "Date";
+
+            var students = from s in _context.Students
+                            select s;
+
+            switch (sortOeder)
+            {
+                case "name_desc":
+                    students = students.OrderByDescending(s => s.LastName);
+                    break;
+
+                case "Date":
+                    students = students.OrderBy(s => s.EnrollmentDate);
+                    break;
+
+                case "date_desc":
+                    students = students.OrderByDescending(s => s.EnrollmentDate);
+                    break;
+
+                default:
+                    students = students.OrderBy(s => s.LastName);
+                    break;
+            }
+
+
             //leiame kõik student'id ja teisendame need StudentIndexViewModel'iks
             //miks peab kasutama await?
             //kui me kasutame await, siis me ootame kuni päring on lõpetatud
