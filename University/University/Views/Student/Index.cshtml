@@ -7,6 +7,12 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<form asp-action="Index" , method="get">
+    <div>
+        <input type="text" name="searchString" placeholder="Seach..." value="@ViewData["CurrentFilter"]" />
+        <button type="submit">Search</button>
+    </div>
+</form>
 
 <h4>Student</h4>
 <hr />
@@ -18,17 +24,14 @@
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">
                     @Html.DisplayNameFor(model => model.LastName)</a>
             </th>
-
             <th>
                 @Html.DisplayNameFor(model => model.FirstMidName)
             </th>
-
             <th>
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]">
                     @Html.DisplayNameFor(model => model.EnrollmentDate)</a>
             </th>
             <th>
-
             </th>
         </tr>
     </thead>
