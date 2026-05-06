@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using University.Data;
 using University.Models;
+using University.Utilities;
 using University.ViewModel;
 
 namespace University.Controllers
@@ -19,11 +20,20 @@ namespace University.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string sortOeder, string SearchString)
+        public async Task<IActionResult> Index(string sortOeder, string SearchString, int? pageNumber, string currentFilter)
         {
             ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOeder) ? "name_desc" : "";
             ViewData["DateSortParm"] = sortOeder == "Date" ? "date_desc" : "Date";
             ViewData["CurrentFilter"] = SearchString;
+
+            if (SearchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                SearchString = currentFilter;
+            }
 
             //var students = from s in _context.Students
             //               select s;
@@ -70,7 +80,9 @@ namespace University.Controllers
 
             var result = await students.ToListAsync();
 
-            return View(result);
+            int pageSize = 3;
+
+            return View(await PaginatedList<StudentIndexViewModel>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         public async Task<IActionResult> Details(int? id)
