@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using University.Data;
 using University.Models;
@@ -20,19 +19,20 @@ namespace University.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string sortOeder, string SearchString, int? pageNumber, string currentFilter)
+        public async Task<IActionResult> Index(string sortOrder, string searchString, int? pageNumber, string currentFilter)
         {
-            ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOeder) ? "name_desc" : "";
-            ViewData["DateSortParm"] = sortOeder == "Date" ? "date_desc" : "Date";
-            ViewData["CurrentFilter"] = SearchString;
 
-            if (SearchString != null)
+            ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewData["CurrentFilter"] = searchString;
+
+            if (searchString != null)
             {
                 pageNumber = 1;
             }
             else
             {
-                SearchString = currentFilter;
+                searchString = currentFilter;
             }
 
             //var students = from s in _context.Students
@@ -53,13 +53,13 @@ namespace University.Controllers
                     //kui me kasutame ToListAsync(), siis me saame tulemuse listina
                 });
 
-            if (!string.IsNullOrEmpty(SearchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
-                students = students.Where(s => s.LastName.Contains(SearchString)
-                                    || s.FirstMidName.Contains(SearchString));
+                students = students.Where(s => s.LastName.Contains(searchString)
+                                    || s.FirstMidName.Contains(searchString));
             }
 
-            switch (sortOeder)
+            switch (sortOrder)
             {
                 case "name_desc":
                     students = students.OrderByDescending(s => s.LastName);
@@ -153,7 +153,7 @@ namespace University.Controllers
         public async Task<IActionResult> Create(StudentCreateViewModel vm)
         {
             //kui model on valiidne, siis loome uue student'i ja salvestame selle andmebaasi
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 var student = new Models.Student
                 {
@@ -176,27 +176,26 @@ namespace University.Controllers
         public async Task<IActionResult> Update(int id)
         {
             var student = await _context.Students
-            .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
 
-
-            //kui student on null siis on NotFound()
-            if(student == null)
+            //kui sutudent on null, siis on NotFound()
+            if (student == null)
             {
                 return NotFound();
             }
 
-            //tuleb teha domaini modelist andmete ülekanne view modeli omasse
-
             var vm = new StudentUpdateViewModel
             {
                 Id = student.Id,
-                LastName = student.LastName,
                 FirstMidName = student.FirstMidName,
+                LastName = student.LastName,
                 EnrollmentDate = student.EnrollmentDate
             };
 
+            //tuleb teha domaini modelist andmete ülekanne view modeli omasse
             return View(vm);
         }
+
         [HttpPost]
         public async Task<IActionResult> Update(StudentUpdateViewModel vm)
         {
@@ -211,16 +210,20 @@ namespace University.Controllers
                 };
 
                 var studentUpdate = student.Id;
+                //lisame student'i andmebaasi ja salvestame muudatused
                 _context.Update(student);
+                //miks kasutame await?
+                //kui me kasutame await, siis me ootame kuni salvestamine on lõpetatud
                 await _context.SaveChangesAsync();
-                //kui andmed on uuendatud, siism suunab tagasi update vaatesse,
-                //kus saab kohe uuesti andmeid uuendada.
-                //hetkel suunab indexi vaatesse peale uuendust.
-                return RedirectToAction(nameof(Update), new {id = studentUpdate });
+                //pärast salvestamist suuname kasutaja tagasi Index vaatesse
+
+                //Kui andmed on uuendatud, siis suunab tagasi Update vaatesse, kus saab kohe uuesti andmeid uuendada.
+                //Hetkel suunab Indexi vaatesse peale uuendust
+                return RedirectToAction(nameof(Update), new { id = studentUpdate });
             }
+
             return RedirectToAction(nameof(Index));
         }
-        //Tehke Delete Get meethod koos vaatega
 
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
@@ -264,8 +267,9 @@ namespace University.Controllers
 
             return View(vm);
         }
-        //tuleb teha ankeedi 
-        //1. VARIANT
+
+
+        //tuleb teha ankeedi kustutamise nupp
         public async Task<IActionResult> DeletePost(int id)
         {
             try
@@ -274,8 +278,8 @@ namespace University.Controllers
                 {
                     Id = id,
                 };
-                //2. VARIANT
-                //var student = await _context.Students
+                //teine variant
+                //var delete = await _context.Students
                 //    .FirstOrDefaultAsync(x => x.Id == id);
 
                 _context.Students.Remove(delete);
@@ -284,31 +288,11 @@ namespace University.Controllers
             }
             catch (DbUpdateException)
             {
-                return RedirectToAction(nameof(Delete), new { id = id, saveChangerError = true });
+                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true });
                 throw;
             }
 
             return RedirectToAction(nameof(Delete));
         }
-
-
-        /*
-        3. VARIANT
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeletePost(int id)
-        {
-            var student = await _context.Students.FindAsync(id);
-
-            if (student != null)
-            {
-                _context.Students.Remove(student);
-                await _context.SaveChangesAsync();
-            }
-
-            return RedirectToAction(nameof(Index));
-        }
-        */
-
     }
 }
