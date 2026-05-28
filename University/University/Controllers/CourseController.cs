@@ -21,11 +21,12 @@ namespace University.Controllers
         public async Task<IActionResult> Index()
         {
             var course = _context.Courses
+                .Include(c => c.Departments)
                 .Select(c => new CourseIndexViewModel
                 {
                     CourseId = c.CourseId,
-                    Credits = c.Credits,
                     Title = c.Title,
+                    Credits = c.Credits,
                     DepartmentId = c.DepartmentId,
                     Department = new CourseDepartmentIndexViewModel
                     {
@@ -34,6 +35,7 @@ namespace University.Controllers
                 });
 
             return View(course);
+
         }
     }
 }
