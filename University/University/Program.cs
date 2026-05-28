@@ -2,10 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using University.Data;
 using Microsoft.Extensions.DependencyInjection;
 
+
 namespace University
 {
-
-    //Command- Update-Database
     public class Program
     {
         public static void Main(string[] args)
@@ -13,11 +12,10 @@ namespace University
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContext<UniversityContext>(options =>
-               options.UseSqlServer(builder.Configuration.GetConnectionString("UniversityContext")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("UniversityContext")));
 
-
-            //add database exeption filter for development enviroment
-            //This will show detailed database errors durning development
+            // Add database exception filter for development environment
+            // This will show detailed database errors during development
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             // Add services to the container.
@@ -25,7 +23,7 @@ namespace University
 
             var app = builder.Build();
 
-            // Create DB if it doesn't exist and seed initial data
+            // create DB if it doesn't exist and seed initial data
             CreateDbIfNotExists(app);
 
             // Configure the HTTP request pipeline.
@@ -44,20 +42,20 @@ namespace University
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=index}/{id?}")
+                pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
             app.Run();
         }
 
-        //Luuakse andmebaas, kui see veel ei eksisteeri
+        //luuakse andmebaas, kui see veel ei eksisteeri
         //ja sisestab sinna algandmed
         private static void CreateDbIfNotExists(IHost host)
         {
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                try 
+                try
                 {
                     var context = services.GetRequiredService<UniversityContext>();
                     DbInitializer.Initializer(context);
@@ -65,10 +63,9 @@ namespace University
                 catch (Exception ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occured creating the DB.");
+                    logger.LogError(ex, "An error occurred creating the DB.");
                 }
             }
         }
     }
-
 }
