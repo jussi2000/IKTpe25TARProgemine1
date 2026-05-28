@@ -7,11 +7,11 @@ namespace University.Models
     {
         [Key]
         public int DepartmentId { get; set; }
-        public int Name { get; set; }
+        public string Name { get; set; }
 
         [Column(TypeName = "Money")]
         public int Budget { get; set; }
-        public DateTime StartDate { get; set; }
+        public DateTime StartDate { get; set; } 
 
         //? tähendab, et see väli võib olla null, st see eiole kohustuslik
 

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using University.Data;
+using University.Models;
+using University.ViewModel.CoursesVM;
 
 namespace University.Controllers
 {
@@ -18,12 +20,20 @@ namespace University.Controllers
         //on vaja kutsuda välja University constructror 
         public async Task<IActionResult> Index()
         {
-            var result = await _context.Courses
-                .Include(c => c.Departments)
-                .AsNoTracking()
-                .ToListAsync();
+            var course = _context.Courses
+                .Select(c => new CourseIndexViewModel
+                {
+                    CourseId = c.CourseId,
+                    Credits = c.Credits,
+                    Title = c.Title,
+                    DepartmentId = c.DepartmentId,
+                    Department = new CourseDepartmentIndexViewModel
+                    {
+                        DepartmentName = c.Departments.Name
+                    }
+                });
 
-            return View(result);
+            return View(course);
         }
     }
 }

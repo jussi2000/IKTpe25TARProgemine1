@@ -9,22 +9,22 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table>
-<thead>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.CourseId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Credits)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Department)
-        </th>
-    </tr>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Credits)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Department)
+            </th>
+        </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
@@ -40,7 +40,7 @@
                     @Html.DisplayFor(ModelItem => item.Credits)
                 </td>
                 <td>
-                    @Html.DisplayFor(ModelItem => item.Department.Name)
+                    @Html.DisplayFor(ModelItem => item.Department.DepartmentName)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.CourseId">Edit</a>
