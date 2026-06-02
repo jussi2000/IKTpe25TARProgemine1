@@ -125,6 +125,38 @@ namespace University.Controllers
             PopulateDepartmentDropDownList(course.DepartmentId);
             return RedirectToAction(nameof(Index));
         }
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var course = await _context.Courses
+                .Include(c => c.Departments)
+                .Where(c => c.CourseId == id)
+                .Select(c => new CourseUpdateViewModel
+                {
+                    CourseId = c.CourseId,
+                    Credits = c.Credits,
+                    Title = c.Title,
+                    Department = new CourseDepartmentIndexViewModel
+                    {
+                        DepartmentName = c.Departments.Name
+                    }
+                })
+                .FirstOrDefaultAsync();
+
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            return View(course);
+        }
+
+
+
         private void PopulateDepartmentDropDownList(object selectedDepartment = null)
         {
             var departmentQuery = from d in _context.Departments

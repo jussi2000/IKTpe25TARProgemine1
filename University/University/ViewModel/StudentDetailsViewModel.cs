@@ -34,9 +34,9 @@ namespace University.ViewModel
     }
 
     public class CourseViewModel
-    {
-        public int CourseId { get; set; }
+    {public int CourseId { get; set; }
         public string Title { get; set; }
         public int Credits { get; set; }
+        
     }
 }
