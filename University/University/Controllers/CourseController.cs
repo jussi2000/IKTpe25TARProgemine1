@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -93,6 +94,44 @@ namespace University.Controllers
 
             }
             return RedirectToAction(nameof(Index));
+
+        }
+
+        public IActionResult Create()
+        {
+            PopulateDepartmentDropDownList();
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CourseCreateViewModel vm)
+        {
+
+                var course = new Course
+                {
+                    CourseId = vm.CourseId,
+                    Title = vm.Title,
+                    Credits = vm.Credits,
+                    Departments = new Department
+                    {
+                        Name = vm.Department.Name
+                    }
+                };
+
+                _context.Update(course);
+                await _context.SaveChangesAsync();
+
+            PopulateDepartmentDropDownList(course.DepartmentId);
+            return RedirectToAction(nameof(Index));
+        }
+        private void PopulateDepartmentDropDownList(object selectedDepartment = null)
+        {
+            var departmentQuery = from d in _context.Departments
+                                  orderby d.Name
+                                  select d;
+            ViewBag.departmentId = new SelectList(departmentQuery
+                .AsNoTracking(), "DepartmentId", "Name", selectedDepartment);
 
         }
     }
