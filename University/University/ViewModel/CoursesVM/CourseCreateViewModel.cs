@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using University.Models;
 
-namespace University.ViewModel.CoursesVM
+namespace University.ViewModel.CourseVM
 {
     public class CourseCreateViewModel
     {
@@ -15,6 +14,7 @@ namespace University.ViewModel.CoursesVM
 
         public DepartmentViewModel Department { get; set; }
     }
+
     public class DepartmentViewModel
     {
         public string? Name { get; set; }
