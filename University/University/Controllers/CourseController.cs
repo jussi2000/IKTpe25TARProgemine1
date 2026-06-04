@@ -153,5 +153,55 @@ namespace University.Controllers
             ViewBag.DepartmentId = new SelectList(departmentsQuery
                 .AsNoTracking(), "DepartmentId", "Name", selectedDepartment);
         }
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var course = await _context.Courses
+                .Include(c => c.Departments)
+                .Where(c => c.CourseId == id)
+                .Select(c => new CourseDetailsViewModel
+                {
+                    CourseId = c.CourseId,
+                    Credits = c.Credits,
+                    Title = c.Title,
+                    DepartmentId = c.DepartmentId,
+                    Department = new CourseDepartmentIndexViewModel
+                    {
+                        DepartmentName = c.Departments.Name
+                    }
+                })
+                .FirstOrDefaultAsync();
+
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            return View(course);
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeletePost(int courseId)
+        {
+            try
+            {
+                Course delete = new Course()
+                {
+                    CourseId = courseId
+                };
+
+                _context.Courses.Remove(delete);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException)
+            {
+                return RedirectToAction(nameof(Delete), new { id = courseId });
+            }
+        }
     }
 }
