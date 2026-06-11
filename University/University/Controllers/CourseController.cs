@@ -103,6 +103,7 @@ namespace University.Controllers
                 Title = vm.Title,
                 Credits = vm.Credits,
                 DepartmentId = vm.DepartmentId,
+
             };
 
             _context.Add(course);
