@@ -3,11 +3,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using University.Data;
 using University.Dto;
 using University.Models;
+using University.ServiceInterface;
 using University.ViewModel.CoursesVM;
 
 namespace University.Services
 {
-    public class FileServices
+    public class FileServices : IFileServices
     {
         private readonly IHostEnvironment _webhost;
         private readonly UniversityContext _context;
