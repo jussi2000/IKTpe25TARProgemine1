@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using University.Models;
 
-namespace University.ViewModel
+namespace University.ViewModel.StudentVM
 {
     public class StudentDetailsViewModel
     {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using University.Data;
 using University.Models;
-using University.ViewModel;
+using University.ViewModel.StudentVM;
 
 namespace University.Controllers
 {

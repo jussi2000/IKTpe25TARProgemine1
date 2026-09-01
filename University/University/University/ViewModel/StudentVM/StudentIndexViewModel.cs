@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace University.ViewModel
+namespace University.ViewModel.StudentVM
 {
-    public class StudentDeleteViewModel
+    public class StudentIndexViewModel
     {
         public int Id { get; set; }
 
@@ -18,6 +18,19 @@ namespace University.ViewModel
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "Enrollment Date")]
         public DateTime EnrollmentDate { get; set; }
-        public ICollection<EnrollmentViewModel> EnrollmentsVm { get; set; }
+
+        //esimene variant, mis ühendab ees- ja perekonnanime
+        [Display(Name = "Full Name")]
+        public string FullName => $"{LastName}, {FirstMidName}";
+
+        //teine variant, mis ühendab ees- ja perekonnanime
+        //[Display(Name = "Full Name")]
+        //public string Fullname
+        //{
+        //    get
+        //    {
+        //        return $"{LastName}, {FirstMidName}";
+        //    }
+        //}
     }
 }
