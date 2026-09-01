@@ -1,4 +1,4 @@
-﻿namespace University.ViewModel
+﻿namespace University.ViewModel.StudentVM
 {
     public class EnrollmentDateGroupViewModel
     {

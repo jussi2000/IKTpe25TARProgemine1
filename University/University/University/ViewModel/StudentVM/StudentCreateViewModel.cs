@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace University.ViewModel
+namespace University.ViewModel.StudentVM
 {
     public class StudentCreateViewModel
     {

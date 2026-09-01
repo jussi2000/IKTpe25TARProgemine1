@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace University.ViewModel
+namespace University.ViewModel.StudentVM
 {
     public class StudentUpdateViewModel
     {
